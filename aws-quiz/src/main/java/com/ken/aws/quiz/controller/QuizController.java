@@ -28,12 +28,12 @@ public class QuizController {
 	private QuizCommentDao commentDao;
 
 	private static final String HTML_HEADER = "<!DOCTYPE html><html><head><title>";
-	private static final String HTML_HEADER2 = "</title><link rel=\"shortcut icon\" href=\"https://storage.googleapis.com/kennie-ng/quiz-icon.ico\"></head><body>";
+	private static final String HTML_HEADER2 = "</title><link rel=\"shortcut icon\" href=\"https://s3-ap-southeast-1.amazonaws.com/kennie-quiz/quiz-icon.ico\"></head><body>";
 
 	@RequestMapping(path = "/", method = RequestMethod.GET)
-	public String index(HttpServletRequest httpServletRequest) {
+	public String index() {
 		String htmlString = HTML_HEADER + "Kennie's server (AWS)</title>"
-				+ "<link rel=\"shortcut icon\" href=\"https://storage.googleapis.com/kennie-ng/hybrid_cloud.ico\"></head><body>";
+				+ "<link rel=\"shortcut icon\" href=\"https://s3-ap-southeast-1.amazonaws.com/kennie-quiz/hybrid_cloud.png\"></head><body>";
 
 		htmlString += "<h1>Hi, Welcome to my Server</h1><p>" //
 				+ "Goto <a href='https://www.kennie-ng.cc/aws-cda-quiz'>AWS Quiz - Developer Associate</a><p>" //
@@ -71,14 +71,14 @@ public class QuizController {
 		String message = httpServletRequest.getParameter("message");
 		String num = httpServletRequest.getParameter("num");
 
-		String htmlString = HTML_HEADER + "Create AWS Quiz" + HTML_HEADER2;
+		String htmlString = HTML_HEADER + "Create AWS Quiz - " + category.toUpperCase() + HTML_HEADER2;
 
 		if ("success".equals(message) && num != null) {
 			htmlString += "<font color='green'><b>Success added record Quiz " + num + "</b></font><p>";
 		}
 
-		htmlString += "<a href='/aws-" + category + "-quiz'>Back to List</a><p>Adding Quiz: <p>" //
-				+ "<form id='quizAdd' action='/aws-" + category + "-quiz/add' method='POST'>" //
+		htmlString += "<a href='/aws-" + category + "-quiz'>Back to List</a><p>Adding Quiz - " + category.toUpperCase()
+				+ ": <p><form id='quizAdd' action='/aws-" + category + "-quiz/add' method='POST'>" //
 				+ "<table><tr><td>Description: </td><td><textarea name='Desc' form='quizAdd' rows=\"10\" cols=\"200\"></textarea></td></tr>" //
 				+ "<tr><td>Question: </td><td><textarea name='Title' form='quizAdd' rows=\"5\" cols=\"200\"></textarea></td></tr>" //
 				+ "<tr><td>Choices: </td><td><textarea name='Choices' form='quizAdd' rows=\"15\" cols=\"200\"></textarea></td></tr>" //
