@@ -27,25 +27,25 @@ public class QuizDao implements InitializingBean {
 	}
 
 	public Quiz readQuiz(Long num) {
-		// Entity entity = datastore.get(keyFactory.newKey(num)); // Load an Entity for
-		// Key(id)
-		//
-		// if (entity == null) {
-		// return null;
-		// }
-		//
-		// Quiz quiz = new Quiz() //
-		// .num(entity.getLong(Quiz.NUM)) //
-		// .title(entity.getString(Quiz.TITLE)) //
-		// .choices(entity.getString(Quiz.CHOICES)) //
-		// .answer(entity.getString(Quiz.ANSWER));
-		//
-		// if (entity.contains(Quiz.DESC)) {
-		// quiz.desc(entity.getString(Quiz.DESC));
-		// }
-		//
-		// return quiz;
-		return new Quiz();
+		Table quizTable = dynamoDB.getTable(TABLE_NAME_QUIZ);
+		final KeyAttribute keyAttribute = new KeyAttribute(Quiz.NUM, num);
+		Item item = quizTable.getItem(keyAttribute);
+
+		if (item == null) {
+			return null;
+		}
+
+		Quiz quiz = new Quiz() //
+				.num(item.getLong(Quiz.NUM)) //
+				.title(item.getString(Quiz.TITLE)) //
+				.choices(item.getString(Quiz.CHOICES)) //
+				.answer(item.getString(Quiz.ANSWER));
+
+		if (item.isPresent(Quiz.DESC)) {
+			quiz.desc(item.getString(Quiz.DESC));
+		}
+
+		return quiz;
 	}
 
 	public Long maxNum() {
