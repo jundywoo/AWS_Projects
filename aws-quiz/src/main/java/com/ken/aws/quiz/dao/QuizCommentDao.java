@@ -1,67 +1,59 @@
 package com.ken.aws.quiz.dao;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
-import org.springframework.beans.factory.InitializingBean;
 import org.springframework.stereotype.Service;
 
+import com.amazonaws.services.dynamodbv2.document.Item;
+import com.amazonaws.services.dynamodbv2.document.ItemCollection;
+import com.amazonaws.services.dynamodbv2.document.QueryOutcome;
+import com.amazonaws.services.dynamodbv2.document.Table;
+import com.amazonaws.services.dynamodbv2.document.spec.QuerySpec;
+import com.amazonaws.services.dynamodbv2.document.utils.ValueMap;
 import com.ken.aws.quiz.model.QuizComment;
 
 @Service
-public class QuizCommentDao implements InitializingBean {
+public class QuizCommentDao extends DynamoDBDaoSupport {
 
-	public static final String KIND_NAME = "quiz_comment";
+	public static final String TABLE_NAME_QUIZ_COMMENT = "quiz_comment";
 
-	// private Datastore datastore;
-	// private KeyFactory keyFactory;
-
-	@Override
-	public void afterPropertiesSet() throws Exception {
-		// datastore = DatastoreOptions.getDefaultInstance().getService(); // Authorized
-		// Datastore service
-		// keyFactory = datastore.newKeyFactory().setKind(KIND_NAME);
-	}
-
-	public List<QuizComment> readCommenByQuiz(Long num) {
+	public List<QuizComment> readCommenByQuiz(String category, Long num) {
 		List<QuizComment> quizComments = new ArrayList<>();
 
-		// String gqlQuery = "select * from " + KIND_NAME + " where num = " + num;
-		// Query<?> query =
-		// Query.newGqlQueryBuilder(gqlQuery).setAllowLiteral(true).build();
-		// QueryResults<?> results = datastore.run(query);
-		//
-		// while (results.hasNext()) {
-		// Object object = results.next();
-		// Entity result = (Entity) object;
-		//
-		// QuizComment comment = new QuizComment() //
-		// .num(result.getLong(QuizComment.NUM)) //
-		// .author(result.getString(QuizComment.AUTHOR)) //
-		// .date(new
-		// Date(result.getTimestamp(QuizComment.DATE).toSqlTimestamp().getTime())) //
-		// .comment(result.getString(QuizComment.COMMENT));
-		//
-		// quizComments.add(comment);
-		//
-		// Collections.sort(quizComments);
-		// Collections.reverse(quizComments);
-		// }
+		Table table = getTable(category + "-" + TABLE_NAME_QUIZ_COMMENT);
+		QuerySpec spec = new QuerySpec() //
+				.withKeyConditionExpression(" num = :value_num") //
+				.withValueMap(new ValueMap().with(":value_num", num));
+
+		ItemCollection<QueryOutcome> items = table.query(spec);
+
+		for (Item item : items) {
+			QuizComment comment = new QuizComment() //
+					.num(item.getLong(QuizComment.NUM)) //
+					.author(item.getString(QuizComment.AUTHOR)) //
+					.date(new Date(item.getLong(QuizComment.DATE))) //
+					.comment(item.getString(QuizComment.COMMENT));
+
+			quizComments.add(comment);
+		}
 
 		return quizComments;
 	}
 
-	public void addComment(QuizComment quizComment) {
-		// IncompleteKey key = keyFactory.newKey(); // Key will be assigned once written
-		// FullEntity<IncompleteKey> entity = Entity.newBuilder(key) // Create the
-		// Entity
-		// .set(QuizComment.NUM, quizComment.getNum()) //
-		// .set(QuizComment.DATE, Timestamp.now()) //
-		// .set(QuizComment.AUTHOR, MyValueUtils.noIndexString(quizComment.getAuthor()))
-		// //
-		// .set(QuizComment.COMMENT,
-		// MyValueUtils.noIndexString(quizComment.getComment())).build();
-		// Entity addedEntity = datastore.add(entity); // Save the Entity
+	public void addComment(String category, QuizComment quizComment) {
+		final String comment = quizComment.getComment();
+		if (comment == null || "".equals(comment.trim())) {
+			return;
+		}
+		final Table table = getTable(category + "-" + TABLE_NAME_QUIZ_COMMENT);
+		final Item item = new Item() //
+				.with(QuizComment.NUM, quizComment.getNum()) //
+				.with(QuizComment.COMMENT, comment) //
+				.with(QuizComment.AUTHOR, quizComment.getAuthor()) //
+				.with(QuizComment.DATE, System.currentTimeMillis());
 
+		table.putItem(item);
 	}
 }
