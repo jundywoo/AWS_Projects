@@ -6,7 +6,11 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.Resource;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -17,6 +21,7 @@ import com.ken.aws.quiz.dao.QuizCommentDao;
 import com.ken.aws.quiz.dao.QuizDao;
 import com.ken.aws.quiz.model.Quiz;
 import com.ken.aws.quiz.model.QuizComment;
+import com.ken.aws.quiz.service.StaticFileService;
 
 @RestController()
 public class QuizController {
@@ -27,22 +32,29 @@ public class QuizController {
 	@Autowired
 	private QuizCommentDao commentDao;
 
+	@Autowired
+	private StaticFileService staticFileService;
+
+	@Value("${server.index.page:classpath:/static/index.html}")
+	private Resource indexPage;
+
+	private static final Log LOG = LogFactory.getLog(QuizController.class);
 	private static final String HTML_HEADER = "<!DOCTYPE html><html><head><title>";
 	private static final String HTML_HEADER2 = "</title><link rel=\"shortcut icon\" href=\"https://s3-ap-southeast-1.amazonaws.com/kennie-quiz/quiz-icon.ico\"></head><body>";
 
 	@RequestMapping(path = "/", method = RequestMethod.GET)
 	public String index() {
-		String htmlString = HTML_HEADER + "Kennie's server (AWS)</title>"
-				+ "<link rel=\"shortcut icon\" href=\"https://s3-ap-southeast-1.amazonaws.com/kennie-quiz/hybrid_cloud.png\"></head><body>";
+		String htmlString = null;
+		try {
+			htmlString = staticFileService.readFileToEnd(indexPage.getFile());
+		} catch (IOException e) {
+			LOG.warn(e.getMessage());
+		}
 
-		htmlString += "<h1>Hi, Welcome to my Server</h1><p>" //
-				+ "Goto <a href='https://www.kennie-ng.cc/aws-cda-quiz'>AWS Quiz - Developer Associate</a><p>" //
-				+ "Goto <a href='/aws-saa-quiz'>AWS Quiz - Solution Architech Associate</a>" //
-				+ "<p><h3>For the server breaking through</h3>" //
-				+ "<table style='border: 0; '><tr><td>Server</td><td>&lt;See the server FQDN in the URL&gt;</td></tr>" //
-				+ "<tr><td>Port</td><td>13348</td></tr>" //
-				+ "<tr><td>Encrtypion</td><td>AES-256-CFB</td></tr>" //
-				+ "<tr><td>Password</td><td>&lt;Contract me on Wechat, SMS etc.&gt;</td></tr></table></body><html>";
+		if (htmlString == null) {
+			htmlString = "<!DOCTYPE html><html><h1>Hi, Welcome to my Server!</h1><font color='red'>Page not found</font><html>";
+		}
+
 		return htmlString;
 	}
 
