@@ -44,12 +44,7 @@ public class QuizController {
 
 	@RequestMapping(path = "/", method = RequestMethod.GET)
 	public String index() {
-		String htmlString = null;
-		try {
-			htmlString = staticFileService.readFileToEnd(indexPage.getFile());
-		} catch (IOException e) {
-			LOG.warn(e.getMessage());
-		}
+		String htmlString = staticFileService.readFileToEnd(indexPage);
 
 		if (htmlString == null) {
 			htmlString = "<!DOCTYPE html><html><h1>Hi, Welcome to my Server!</h1><font color='red'>Page not found</font><html>";
@@ -62,7 +57,7 @@ public class QuizController {
 	public String list(@PathVariable("category") String category) {
 		Long maxNum = quizDao.maxNum(category);
 		String htmlString = HTML_HEADER + "AWS Quiz - " + category.toUpperCase() + HTML_HEADER2
-				+ "<a href='/'>Home</a><p>List: ";
+				+ "<a href='/'>Home</a><p>Quiz List: ";
 
 		if (maxNum > 0) {
 			htmlString += "<a href='/aws-" + category + "-quiz/1'>Quiz 1</a>";
@@ -87,6 +82,8 @@ public class QuizController {
 
 		if ("success".equals(message) && num != null) {
 			htmlString += "<font color='green'><b>Success added record Quiz " + num + "</b></font><p>";
+		} else {
+			htmlString += "<font color='red'><b>Failed - " + message + "</b></font><p>";
 		}
 
 		htmlString += "<a href='/aws-" + category + "-quiz'>Back to List</a><p>Adding Quiz - " + category.toUpperCase()
@@ -109,7 +106,12 @@ public class QuizController {
 			HttpServletResponse response) throws IOException {
 		Long maxNum = quizDao.maxNum(category);
 		Quiz quiz = new Quiz().num(maxNum + 1).answer(answer).choices(choices).title(title).desc(desc);
-		quizDao.addQuiz(category, quiz);
+		try {
+			quizDao.addQuiz(category, quiz);
+		} catch (RuntimeException e) {
+			LOG.warn(e.getMessage());
+			response.sendRedirect("/aws-" + category + "-quiz/add?message=" + e.getMessage());
+		}
 
 		response.sendRedirect("/aws-" + category + "-quiz/add?message=success&num=" + quiz.getNum());
 	}
