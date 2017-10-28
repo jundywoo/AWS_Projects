@@ -57,12 +57,17 @@ public class QuizController {
 	public String list(@PathVariable("category") String category) {
 		Long maxNum = quizDao.maxNum(category);
 		String htmlString = HTML_HEADER + "AWS Quiz - " + category.toUpperCase() + HTML_HEADER2
-				+ "<a href='/'>Home</a><p>Quiz List: ";
+				+ "<a href='/'>Home</a><p>Quiz List: <P>";
 
 		if (maxNum > 0) {
 			htmlString += "<a href='/aws-" + category + "-quiz/1'>Quiz 1</a>";
 			for (int i = 2; i <= maxNum; i++) {
-				htmlString += "&nbsp;|&nbsp;<a href='/aws-" + category + "-quiz/" + i + "'>Quiz " + i + "</a>";
+				if (i % 10 == 1) {
+					htmlString += "<p>";
+				} else {
+					htmlString += "&nbsp;|&nbsp;";
+				}
+				htmlString += "<a href='/aws-" + category + "-quiz/" + i + "'>Quiz " + i + "</a>";
 			}
 		} else {
 			htmlString += "<p>No Question in the list";
@@ -104,16 +109,17 @@ public class QuizController {
 			@RequestParam("Choices") String choices, //
 			@RequestParam("Answer") String answer, //
 			HttpServletResponse response) throws IOException {
-		Long maxNum = quizDao.maxNum(category);
-		Quiz quiz = new Quiz().num(maxNum + 1).answer(answer).choices(choices).title(title).desc(desc);
+		Long nextNum = quizDao.maxNum(category) + 1;
+		Quiz quiz = new Quiz().quizId(category + '-' + nextNum).answer(answer).choices(choices).title(title).desc(desc);
 		try {
-			quizDao.addQuiz(category, quiz);
+			quizDao.addQuiz(quiz, category, nextNum);
 		} catch (RuntimeException e) {
 			LOG.warn(e.getMessage());
-			response.sendRedirect("/aws-" + category + "-quiz/add?message=" + e.getMessage());
+			response.sendRedirect("/aws-" + category + "-quiz/add?message="
+					+ java.net.URLEncoder.encode(e.getMessage(), "ISO-8859-1"));
 		}
 
-		response.sendRedirect("/aws-" + category + "-quiz/add?message=success&num=" + quiz.getNum());
+		response.sendRedirect("/aws-" + category + "-quiz/add?message=success&num=" + nextNum);
 	}
 
 	@RequestMapping(path = "/aws-{category}-quiz/{id}/comment", method = RequestMethod.POST)
@@ -122,9 +128,9 @@ public class QuizController {
 			@RequestParam("author") String author, //
 			@RequestParam("comment") String comment, //
 			HttpServletResponse response) throws IOException {
-		QuizComment quizComment = new QuizComment().num(id).author(author).comment(comment);
+		QuizComment quizComment = new QuizComment().quizId(category + '-' + id).author(author).comment(comment);
 
-		commentDao.addComment(category, quizComment);
+		commentDao.addComment(quizComment);
 
 		response.sendRedirect("/aws-" + category + "-quiz/" + id);
 	}
@@ -133,7 +139,7 @@ public class QuizController {
 	public String getQuiz(@PathVariable("category") String category, //
 			@PathVariable("id") Long id) {
 		Long maxNum = quizDao.maxNum(category);
-		Quiz quiz = quizDao.readQuiz(category, id);
+		Quiz quiz = quizDao.readQuiz(category + '-' + id);
 		String htmlString = HTML_HEADER + category.toUpperCase() + " Quiz " + id + HTML_HEADER2 + "<a href='/aws-"
 				+ category + "-quiz'>Quiz List</a><p>Quiz " + id + "  <p>";
 
@@ -145,7 +151,7 @@ public class QuizController {
 				htmlString += "<tr><td><b>Description</b></td><td><h1><pre>" + desc + "</pre></h1></td></tr>";
 			}
 
-			List<QuizComment> comments = commentDao.readCommenByQuiz(category, id);
+			List<QuizComment> comments = commentDao.readCommenByQuiz(category + '-' + id);
 			htmlString += "<tr><td><b>Question</b></td><td><h1><pre>" + quiz.getTitle() + "</pre></h1></td></tr>" //
 					+ "<tr><td><b>Choices<b></td><td><h3><pre>" + quiz.getChoices() + "</pre></h3></td></tr>" //
 					+ "<tr><td><b>Answer</b></td><td><h3><font id='answerBox' color='red'>"

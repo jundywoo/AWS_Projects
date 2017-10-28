@@ -2,21 +2,20 @@ package com.ken.aws.quiz.model;
 
 public class Quiz {
 
-	public static final String NUM = "num";
+	public static final String QUIZ_ID = "quiz_id";
 	public static final String TITLE = "title";
 	public static final String CHOICES = "choices";
 	public static final String DESC = "desc";
 	public static final String ANSWER = "answer";
 
-	private Long num;
+	private String quizId;
 	private String title;
 	private String desc;
-
 	private String choices;
 	private String answer;
 
-	public Quiz num(Long num) {
-		this.num = num;
+	public Quiz quizId(String quizId) {
+		this.quizId = quizId;
 		return this;
 	}
 
@@ -40,44 +39,24 @@ public class Quiz {
 		return this;
 	}
 
-	public Long getNum() {
-		return num;
-	}
-
-	public void setNum(Long num) {
-		this.num = num;
+	public String getQuizId() {
+		return quizId;
 	}
 
 	public String getTitle() {
 		return title;
 	}
 
-	public void setTitle(String title) {
-		this.title = title;
-	}
-
 	public String getChoices() {
 		return choices;
-	}
-
-	public void setChoices(String choices) {
-		this.choices = choices;
 	}
 
 	public String getAnswer() {
 		return answer;
 	}
 
-	public void setAnswer(String answer) {
-		this.answer = answer;
-	}
-
 	public String getDesc() {
 		return desc;
-	}
-
-	public void setDesc(String desc) {
-		this.desc = desc;
 	}
 
 }

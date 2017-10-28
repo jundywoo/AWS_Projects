@@ -20,9 +20,9 @@ public class QuizDao extends DynamoDBDaoSupport {
 	public static final String TABLE_NAME_QUIZ_CONTROL = "quiz_control";
 	public static final String QUIZ_MAX_NUM = "quiz_max_num";
 
-	public Quiz readQuiz(String category, Long num) {
-		Table quizTable = getTable(category + "-" + TABLE_NAME_QUIZ);
-		final KeyAttribute keyAttribute = new KeyAttribute(Quiz.NUM, num);
+	public Quiz readQuiz(String quizId) {
+		Table quizTable = getTable(TABLE_NAME_QUIZ);
+		final KeyAttribute keyAttribute = new KeyAttribute(Quiz.QUIZ_ID, quizId);
 		Item item = quizTable.getItem(keyAttribute);
 
 		if (item == null) {
@@ -30,7 +30,7 @@ public class QuizDao extends DynamoDBDaoSupport {
 		}
 
 		Quiz quiz = new Quiz() //
-				.num(item.getLong(Quiz.NUM)) //
+				.quizId(item.getString(Quiz.QUIZ_ID)) //
 				.title(item.getString(Quiz.TITLE)) //
 				.choices(item.getString(Quiz.CHOICES)) //
 				.answer(item.getString(Quiz.ANSWER));
@@ -52,12 +52,12 @@ public class QuizDao extends DynamoDBDaoSupport {
 		return maxNum;
 	}
 
-	public void addQuiz(String category, Quiz quiz) {
+	public void addQuiz(Quiz quiz, String category, Long num) {
 		final Table quizControlTable = getTable(TABLE_NAME_QUIZ_CONTROL);
 
 		final KeyAttribute primaryKey = new KeyAttribute(QuizControl.CONTROL_FIELD, category + "-" + QUIZ_MAX_NUM);
 		final Map<String, String> nameMap = new NameMap().with("#update_param", QuizControl.VALUE);
-		final Map<String, Object> valueMap = new ValueMap().with(":update_value", quiz.getNum());
+		final Map<String, Object> valueMap = new ValueMap().with(":update_value", num);
 
 		final UpdateItemSpec updateItemSpec = new UpdateItemSpec() //
 				.withPrimaryKey(primaryKey) //
@@ -67,9 +67,9 @@ public class QuizDao extends DynamoDBDaoSupport {
 
 		quizControlTable.updateItem(updateItemSpec);
 
-		final Table quizTable = getTable(category + "-" + TABLE_NAME_QUIZ);
+		final Table quizTable = getTable(TABLE_NAME_QUIZ);
 		final Item quizItem = new Item() //
-				.with(Quiz.NUM, quiz.getNum()) //
+				.with(Quiz.QUIZ_ID, quiz.getQuizId()) //
 				.with(Quiz.TITLE, quiz.getTitle()) //
 				.with(Quiz.CHOICES, quiz.getChoices()) //
 				.with(Quiz.ANSWER, quiz.getAnswer());
