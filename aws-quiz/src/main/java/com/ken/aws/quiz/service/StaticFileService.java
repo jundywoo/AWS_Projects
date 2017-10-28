@@ -24,7 +24,7 @@ public class StaticFileService {
 		try {
 			return readFileToEnd(new FileInputStream(file), file.length());
 		} catch (FileNotFoundException e) {
-			LOG.warn(e.getMessage());
+			LOG.warn(e.getMessage(), e);
 			return null;
 		}
 	}
@@ -36,7 +36,7 @@ public class StaticFileService {
 		try {
 			return readFileToEnd(resource.getInputStream(), resource.getFile().length());
 		} catch (IOException e) {
-			LOG.warn(e.getMessage());
+			LOG.warn(e.getMessage(), e);
 			return null;
 		}
 	}
