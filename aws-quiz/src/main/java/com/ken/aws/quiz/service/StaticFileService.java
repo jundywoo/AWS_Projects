@@ -34,7 +34,7 @@ public class StaticFileService {
 			return null;
 		}
 		try {
-			return readFileToEnd(resource.getInputStream(), resource.getFile().length());
+			return readFileToEnd(resource.getInputStream(), 0);
 		} catch (IOException e) {
 			LOG.warn(e.getMessage(), e);
 			return null;
