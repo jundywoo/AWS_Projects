@@ -82,7 +82,7 @@ public class QuizController {
 
 		if ("success".equals(message) && num != null) {
 			htmlString += "<font color='green'><b>Success added record Quiz " + num + "</b></font><p>";
-		} else {
+		} else if (message != null && !"".equals(message.trim())) {
 			htmlString += "<font color='red'><b>Failed - " + message + "</b></font><p>";
 		}
 
