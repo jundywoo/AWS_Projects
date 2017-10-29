@@ -3,18 +3,25 @@ package com.ken.aws.quiz.model;
 public class QuizControl {
 
 	public static final String CONTROL_FIELD = "control_field";
-	public static final String VALUE = "value";
+	public static final String MAX_NUM = "max_num";
+	public static final String ALLOW_COMMENT = "allow_comment";
 
 	private String controlField;
-	private Long value;
+	private Long maxNum;
+	private boolean allowComment;
 
 	public QuizControl controlField(String controlField) {
 		this.controlField = controlField;
 		return this;
 	}
 
-	public QuizControl value(long value) {
-		this.value = value;
+	public QuizControl maxNum(long maxNum) {
+		this.maxNum = maxNum;
+		return this;
+	}
+
+	public QuizControl allowComment(boolean allowComment) {
+		this.allowComment = allowComment;
 		return this;
 	}
 
@@ -22,8 +29,12 @@ public class QuizControl {
 		return controlField;
 	}
 
-	public Long getValue() {
-		return value;
+	public Long getMaxNum() {
+		return maxNum;
+	}
+
+	public boolean isAllowComment() {
+		return allowComment;
 	}
 
 }
