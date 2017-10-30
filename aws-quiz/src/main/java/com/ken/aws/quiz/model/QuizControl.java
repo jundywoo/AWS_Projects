@@ -4,10 +4,12 @@ public class QuizControl {
 
 	public static final String CONTROL_FIELD = "control_field";
 	public static final String MAX_NUM = "max_num";
+	public static final String MY_CHECK = "my_check";
 	public static final String ALLOW_COMMENT = "allow_comment";
 
 	private String controlField;
 	private Long maxNum;
+	private Long myCheck;
 	private boolean allowComment;
 
 	public QuizControl controlField(String controlField) {
@@ -17,6 +19,11 @@ public class QuizControl {
 
 	public QuizControl maxNum(long maxNum) {
 		this.maxNum = maxNum;
+		return this;
+	}
+
+	public QuizControl myCheck(long myCheck) {
+		this.myCheck = myCheck;
 		return this;
 	}
 
@@ -31,6 +38,10 @@ public class QuizControl {
 
 	public Long getMaxNum() {
 		return maxNum;
+	}
+
+	public Long getMyCheck() {
+		return myCheck;
 	}
 
 	public boolean isAllowComment() {

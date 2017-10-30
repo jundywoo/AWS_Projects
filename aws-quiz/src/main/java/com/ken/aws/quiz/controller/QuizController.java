@@ -109,7 +109,7 @@ public class QuizController {
 			@RequestParam("Choices") String choices, //
 			@RequestParam("Answer") String answer, //
 			HttpServletResponse response) throws IOException {
-		Long nextNum = quizDao.maxNum(category) + 1;
+		Long nextNum = quizDao.getMyCheck(category) + 1;
 		Quiz quiz = new Quiz().quizId(category + '-' + nextNum).answer(answer).choices(choices).title(title).desc(desc);
 		try {
 			quizDao.addQuiz(quiz, category, nextNum);
@@ -141,7 +141,14 @@ public class QuizController {
 		Long maxNum = quizDao.maxNum(category);
 		Quiz quiz = quizDao.readQuiz(category + '-' + id);
 		String htmlString = HTML_HEADER + category.toUpperCase() + " Quiz " + id + HTML_HEADER2 + "<a href='/aws-"
-				+ category + "-quiz'>Quiz List</a><p>Quiz " + id + "  <p>";
+				+ category + "-quiz'>Quiz List</a><p>";
+		if (id > 1) {
+			htmlString += "<a href='/aws-" + category + "-quiz/" + (id - 1) + "'>Previous Quiz</a>";
+		}
+		if (id < maxNum) {
+			htmlString += "&nbsp;&nbsp;&nbsp;&nbsp;<a href='/aws-" + category + "-quiz/" + (id + 1) + "'>Next Quiz</a>";
+		}
+		htmlString += "<p>Quiz " + id + "  <p>";
 
 		if (quiz != null) {
 			htmlString += "<table border='1'>";

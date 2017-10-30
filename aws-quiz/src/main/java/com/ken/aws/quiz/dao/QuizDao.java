@@ -52,11 +52,21 @@ public class QuizDao extends DynamoDBDaoSupport {
 		return maxNum;
 	}
 
+	public Long getMyCheck(String category) {
+		Table quizControl = getTable(TABLE_NAME_QUIZ_CONTROL);
+		final KeyAttribute keyAttribute = new KeyAttribute(QuizControl.CONTROL_FIELD, category);
+		Item item = quizControl.getItem(keyAttribute);
+
+		long maxNum = item.getLong(QuizControl.MY_CHECK);
+
+		return maxNum;
+	}
+
 	public void addQuiz(Quiz quiz, String category, Long num) {
 		final Table quizControlTable = getTable(TABLE_NAME_QUIZ_CONTROL);
 
 		final KeyAttribute primaryKey = new KeyAttribute(QuizControl.CONTROL_FIELD, category);
-		final Map<String, String> nameMap = new NameMap().with("#update_param", QuizControl.MAX_NUM);
+		final Map<String, String> nameMap = new NameMap().with("#update_param", QuizControl.MY_CHECK);
 		final Map<String, Object> valueMap = new ValueMap().with(":update_value", num);
 
 		final UpdateItemSpec updateItemSpec = new UpdateItemSpec() //
