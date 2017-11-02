@@ -6,7 +6,12 @@ import java.util.TimeZone;
 
 public class QuizComment implements Comparable<QuizComment> {
 
+	public static final String TABLE_NAME_QUIZ_COMMENT = "quiz_comment";
+
+	// Primary Key
 	public static final String QUIZ_ID = "quiz_id";
+
+	// Data field
 	public static final String AUTHOR = "author";
 	public static final String DATE = "date";
 	public static final String COMMENT = "comment";

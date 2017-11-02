@@ -19,8 +19,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.ken.aws.quiz.dao.QuizCommentDao;
 import com.ken.aws.quiz.dao.QuizDao;
-import com.ken.aws.quiz.model.Quiz;
 import com.ken.aws.quiz.model.QuizComment;
+import com.ken.aws.quiz.model.QuizEntity;
 import com.ken.aws.quiz.service.StaticFileService;
 
 @RestController()
@@ -55,7 +55,7 @@ public class QuizController {
 
 	@RequestMapping("/aws-{category}-quiz")
 	public String list(@PathVariable("category") String category) {
-		Long maxNum = quizDao.maxNum(category);
+		Long maxNum = quizDao.getMaxNum(category);
 		String htmlString = HTML_HEADER + "AWS Quiz - " + category.toUpperCase() + HTML_HEADER2
 				+ "<a href='/'>Home</a><p>Quiz List: <P>";
 
@@ -110,9 +110,15 @@ public class QuizController {
 			@RequestParam("Answer") String answer, //
 			HttpServletResponse response) throws IOException {
 		Long nextNum = quizDao.getMyCheck(category) + 1;
-		Quiz quiz = new Quiz().quizId(category + '-' + nextNum).answer(answer).choices(choices).title(title).desc(desc);
+		QuizEntity quiz = new QuizEntity() //
+				.category(category) //
+				.num(nextNum) //
+				.answer(answer) //
+				.choices(choices) //
+				.title(title) //
+				.desc(desc);
 		try {
-			quizDao.addQuiz(quiz, category, nextNum);
+			quizDao.addQuiz(quiz);
 		} catch (RuntimeException e) {
 			LOG.warn(e.getMessage());
 			response.sendRedirect("/aws-" + category + "-quiz/add?message="
@@ -138,8 +144,8 @@ public class QuizController {
 	@RequestMapping("/aws-{category}-quiz/{id}")
 	public String getQuiz(@PathVariable("category") String category, //
 			@PathVariable("id") Long id) {
-		Long maxNum = quizDao.maxNum(category);
-		Quiz quiz = quizDao.readQuiz(category + '-' + id);
+		Long maxNum = quizDao.getMaxNum(category);
+		QuizEntity quiz = quizDao.readQuiz(category, id);
 		String htmlString = HTML_HEADER + category.toUpperCase() + " Quiz " + id + HTML_HEADER2 + "<a href='/aws-"
 				+ category + "-quiz'>Quiz List</a><p>";
 		if (id > 1) {

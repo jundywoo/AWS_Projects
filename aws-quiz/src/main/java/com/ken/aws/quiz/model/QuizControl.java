@@ -2,6 +2,8 @@ package com.ken.aws.quiz.model;
 
 public class QuizControl {
 
+	public static final String TABLE_NAME_QUIZ_CONTROL = "quiz_control";
+
 	public static final String CONTROL_FIELD = "control_field";
 	public static final String MAX_NUM = "max_num";
 	public static final String MY_CHECK = "my_check";
