@@ -16,7 +16,7 @@
 	<properties>
 		<version.aws-java-sdk>1.11.34</version.aws-java-sdk>
 		<version.commons-lang3>3.6</version.commons-lang3>
-		
+
 		<java.version>1.8</java.version>
 	</properties>
 
@@ -53,5 +53,16 @@
 			</plugin>
 		</plugins>
 	</build>
+
+	<distributionManagement>
+		<repository>
+			<id>KennieNexusServer</id>
+			<url>http://nexus.kennie-ng.cc/nexus/content/repositories/releases</url>
+		</repository>
+		<snapshotRepository>
+			<id>KennieNexusServer</id>
+			<url>http://nexus.kennie-ng.cc/nexus/content/repositories/snapshots</url>
+		</snapshotRepository>
+	</distributionManagement>
 
 </project>
