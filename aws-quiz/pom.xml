@@ -56,12 +56,12 @@
 
 	<distributionManagement>
 		<repository>
-			<id>KennieNexusServer</id>
-			<url>https://nexus.kennie.home/repository/maven-snapshots/</url>
+			<id>nexus-releases</id>
+			<url>https://nexus.kennie.home/repository/maven-releases/</url>
 		</repository>
 		<snapshotRepository>
-			<id>KennieNexusServer</id>
-			<url>https://nexus.kennie.home/repository/maven-releases/</url>
+			<id>nexus-snapshots</id>
+			<url>https://nexus.kennie.home/repository/maven-snapshots/</url>
 		</snapshotRepository>
 	</distributionManagement>
 
