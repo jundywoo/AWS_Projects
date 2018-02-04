@@ -53,21 +53,21 @@ public class QuizController {
 		return htmlString;
 	}
 
-	@RequestMapping("/aws-{category}-quiz")
+	@RequestMapping("/aws-quiz-{category}")
 	public String list(@PathVariable("category") String category) {
 		Long maxNum = quizDao.getMaxNum(category);
 		String htmlString = HTML_HEADER + "AWS Quiz - " + category.toUpperCase() + HTML_HEADER2
 				+ "<a href='/'>Home</a><p>Quiz List: <P>";
 
 		if (maxNum > 0) {
-			htmlString += "<a href='/aws-" + category + "-quiz/1'>Quiz 1</a>";
+			htmlString += "<a href='/aws-quiz-" + category + "/1'>Quiz 1</a>";
 			for (int i = 2; i <= maxNum; i++) {
 				if (i % 10 == 1) {
 					htmlString += "<p>";
 				} else {
 					htmlString += "&nbsp;|&nbsp;";
 				}
-				htmlString += "<a href='/aws-" + category + "-quiz/" + i + "'>Quiz " + i + "</a>";
+				htmlString += "<a href='/aws-quiz-" + category + "/" + i + "'>Quiz " + i + "</a>";
 			}
 		} else {
 			htmlString += "<p>No Question in the list";
@@ -77,7 +77,7 @@ public class QuizController {
 		return htmlString;
 	}
 
-	@RequestMapping(path = "/aws-{category}-quiz/add", method = RequestMethod.GET)
+	@RequestMapping(path = "/aws-quiz-{category}/add", method = RequestMethod.GET)
 	public String addQuizPage(@PathVariable("category") String category, //
 			HttpServletRequest httpServletRequest) {
 		String message = httpServletRequest.getParameter("message");
@@ -91,8 +91,8 @@ public class QuizController {
 			htmlString += "<font color='red'><b>Failed - " + message + "</b></font><p>";
 		}
 
-		htmlString += "<a href='/aws-" + category + "-quiz'>Back to List</a><p>Adding Quiz - " + category.toUpperCase()
-				+ ": <p><form id='quizAdd' action='/aws-" + category + "-quiz/add' method='POST'>" //
+		htmlString += "<a href='/aws-quiz-" + category + "'>Back to List</a><p>Adding Quiz - " + category.toUpperCase()
+				+ ": <p><form id='quizAdd' action='/aws-quiz-" + category + "/add' method='POST'>" //
 				+ "<table><tr><td>Description: </td><td><textarea name='Desc' form='quizAdd' rows=\"10\" cols=\"200\"></textarea></td></tr>" //
 				+ "<tr><td>Question: </td><td><textarea name='Title' form='quizAdd' rows=\"5\" cols=\"200\"></textarea></td></tr>" //
 				+ "<tr><td>Choices: </td><td><textarea name='Choices' form='quizAdd' rows=\"15\" cols=\"200\"></textarea></td></tr>" //
@@ -102,7 +102,7 @@ public class QuizController {
 		return htmlString;
 	}
 
-	@RequestMapping(path = "/aws-{category}-quiz/add", method = RequestMethod.POST)
+	@RequestMapping(path = "/aws-quiz-{category}/add", method = RequestMethod.POST)
 	public void addQuiz(@PathVariable("category") String category, //
 			@RequestParam("Title") String title, //
 			@RequestParam("Desc") String desc, //
@@ -121,14 +121,14 @@ public class QuizController {
 			quizDao.addQuiz(quiz);
 		} catch (RuntimeException e) {
 			LOG.warn(e.getMessage());
-			response.sendRedirect("/aws-" + category + "-quiz/add?message="
+			response.sendRedirect("/aws-quiz-" + category + "/add?message="
 					+ java.net.URLEncoder.encode(e.getMessage(), "ISO-8859-1"));
 		}
 
-		response.sendRedirect("/aws-" + category + "-quiz/add?message=success&num=" + nextNum);
+		response.sendRedirect("/aws-quiz-" + category + "/add?message=success&num=" + nextNum);
 	}
 
-	@RequestMapping(path = "/aws-{category}-quiz/{id}/comment", method = RequestMethod.POST)
+	@RequestMapping(path = "/aws-quiz-{category}/{id}/comment", method = RequestMethod.POST)
 	public void addQuizComment(@PathVariable("category") String category, //
 			@PathVariable("id") Long id, //
 			@RequestParam("author") String author, //
@@ -138,21 +138,21 @@ public class QuizController {
 
 		commentDao.addComment(quizComment);
 
-		response.sendRedirect("/aws-" + category + "-quiz/" + id);
+		response.sendRedirect("/aws-quiz-" + category + "/" + id);
 	}
 
-	@RequestMapping("/aws-{category}-quiz/{id}")
+	@RequestMapping("/aws-quiz-{category}/{id}")
 	public String getQuiz(@PathVariable("category") String category, //
 			@PathVariable("id") Long id) {
 		Long maxNum = quizDao.getMaxNum(category);
 		QuizEntity quiz = quizDao.readQuiz(category, id);
-		String htmlString = HTML_HEADER + category.toUpperCase() + " Quiz " + id + HTML_HEADER2 + "<a href='/aws-"
-				+ category + "-quiz'>Quiz List</a><p>";
+		String htmlString = HTML_HEADER + category.toUpperCase() + " Quiz " + id + HTML_HEADER2 + "<a href='/aws-quiz-"
+				+ category + "'>Quiz List</a><p>";
 		if (id > 1) {
-			htmlString += "<a href='/aws-" + category + "-quiz/" + (id - 1) + "'>Previous Quiz</a>";
+			htmlString += "<a href='/aws-quiz-" + category + "/" + (id - 1) + "'>Previous Quiz</a>";
 		}
 		if (id < maxNum) {
-			htmlString += "&nbsp;&nbsp;&nbsp;&nbsp;<a href='/aws-" + category + "-quiz/" + (id + 1) + "'>Next Quiz</a>";
+			htmlString += "&nbsp;&nbsp;&nbsp;&nbsp;<a href='/aws-quiz-" + category + "/" + (id + 1) + "'>Next Quiz</a>";
 		}
 		htmlString += "<p>Quiz " + id + "  <p>";
 
@@ -176,7 +176,7 @@ public class QuizController {
 
 			String addCommentHtml = "<button id='addComment' onclick='getElementById(\"addComment\").style.display=\"none\";"
 					+ "getElementById(\"commentForm\").style.display=\"block\" ' >Add Comment</button><div id='commentForm' style='display: none'>"
-					+ "<form id='commentAdd' action='/aws-" + category + "-quiz/" + id + "/comment' method='POST'>"
+					+ "<form id='commentAdd' action='/aws-quiz-" + category + "/" + id + "/comment' method='POST'>"
 					+ "<table><tr><td>Author:</td><td><input name='author' /></td></tr>"
 					+ "<tr><td>Comment:</td><td><textarea name='comment' form='commentAdd'  rows='5' cols='200'></textarea></table>"
 					+ "<input type='submit'/></form></div>";
@@ -203,10 +203,10 @@ public class QuizController {
 		}
 
 		if (id > 1) {
-			htmlString += "<a href='/aws-" + category + "-quiz/" + (id - 1) + "'>Previous Quiz</a>";
+			htmlString += "<a href='/aws-quiz-" + category + "/" + (id - 1) + "'>Previous Quiz</a>";
 		}
 		if (id < maxNum) {
-			htmlString += "&nbsp;&nbsp;&nbsp;&nbsp;<a href='/aws-" + category + "-quiz/" + (id + 1) + "'>Next Quiz</a>";
+			htmlString += "&nbsp;&nbsp;&nbsp;&nbsp;<a href='/aws-quiz-" + category + "/" + (id + 1) + "'>Next Quiz</a>";
 		}
 
 		htmlString += "</body><html>";
