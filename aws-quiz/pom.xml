@@ -19,7 +19,7 @@
 
 		<java.version>1.8</java.version>
 
-		<docker.image.prefix>jundywoo</docker.image.prefix>
+		<docker.image.prefix>kennieng</docker.image.prefix>
 	</properties>
 
 	<dependencies>
