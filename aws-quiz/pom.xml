@@ -5,7 +5,7 @@
 
 	<groupId>com.ken.aws</groupId>
 	<artifactId>aws-quiz</artifactId>
-	<version>1.1.1</version>
+	<version>1.1.2</version>
 
 	<parent>
 		<groupId>org.springframework.boot</groupId>
@@ -48,6 +48,12 @@
 	</dependencies>
 
 	<build>
+		<resources>
+			<resource>
+				<directory>src/main/resources/</directory>
+				<filtering>true</filtering>
+			</resource>
+		</resources>
 		<plugins>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
@@ -60,7 +66,8 @@
 				<configuration>
 					<imageName>${docker.image.prefix}/${project.artifactId}</imageName>
 					<baseImage>openjdk:8-jdk-alpine</baseImage>
-					<entryPoint>["java", "-Djava.security.egd=file:/dev/./urandom", "-jar", "/app/${project.build.finalName}.jar"]</entryPoint>
+					<entryPoint>["java", "-Djava.security.egd=file:/dev/./urandom",
+						"-jar", "/app/${project.build.finalName}.jar"]</entryPoint>
 					<!-- copy the service's jar file from target into the root directory 
 						of the image -->
 					<resources>
