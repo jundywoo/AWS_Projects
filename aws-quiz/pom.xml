@@ -117,11 +117,11 @@
 	<distributionManagement>
 		<repository>
 			<id>nexus-releases</id>
-			<url>http://nexus.kennie-ng.cc/nexus/repository/maven-releases/</url>
+			<url>http://nexus.kennie-ng.cc/nexus/content/repository/maven-releases/</url>
 		</repository>
 		<snapshotRepository>
 			<id>nexus-snapshots</id>
-			<url>http://nexus.kennie-ng.cc/nexus/repository/maven-snapshots/</url>
+			<url>http://nexus.kennie-ng.cc/nexus/content/repositories/snapshots/</url>
 		</snapshotRepository>
 	</distributionManagement>
 
