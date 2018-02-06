@@ -5,7 +5,7 @@
 
 	<groupId>com.ken.aws</groupId>
 	<artifactId>aws-quiz</artifactId>
-	<version>1.2-SNAPSHOT</version>
+	<version>1.2.0</version>
 
 	<parent>
 		<groupId>org.springframework.boot</groupId>
@@ -117,7 +117,7 @@
 	<distributionManagement>
 		<repository>
 			<id>nexus-releases</id>
-			<url>http://nexus.kennie-ng.cc/nexus/content/repository/maven-releases/</url>
+			<url>http://nexus.kennie-ng.cc/nexus/content/repositories/releases/</url>
 		</repository>
 		<snapshotRepository>
 			<id>nexus-snapshots</id>
