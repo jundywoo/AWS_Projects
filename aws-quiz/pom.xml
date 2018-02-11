@@ -5,7 +5,7 @@
 
 	<groupId>com.ken.aws</groupId>
 	<artifactId>aws-quiz</artifactId>
-	<version>1.2.2</version>
+	<version>1.2.3</version>
 
 	<parent>
 		<groupId>org.springframework.boot</groupId>
