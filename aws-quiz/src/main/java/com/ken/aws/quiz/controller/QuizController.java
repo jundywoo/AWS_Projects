@@ -60,7 +60,7 @@ public class QuizController {
 		final String category = pCategory.startsWith(LEGACY_PRFIX) ? pCategory.replaceAll(LEGACY_PRFIX, "") : pCategory;
 		final String prefix = pCategory != category ? LEGACY_PRFIX : "";
 		final Long maxNum = quizDao.getMaxNum(category);
-		String htmlString = HTML_HEADER + "Quiz - " + prefix + category.toUpperCase() + HTML_HEADER2
+		String htmlString = HTML_HEADER + "Quiz - " + prefix + category + HTML_HEADER2
 				+ "<a href='/'>Home</a><p>Quiz List: <P>";
 
 		if (maxNum > 0) {
@@ -90,7 +90,7 @@ public class QuizController {
 		final String message = httpServletRequest.getParameter("message");
 		final String num = httpServletRequest.getParameter("num");
 
-		String htmlString = HTML_HEADER + "Create AWS Quiz - " + category.toUpperCase() + HTML_HEADER2;
+		String htmlString = HTML_HEADER + "Create Quiz - " + prefix + category + HTML_HEADER2;
 
 		if ("success".equals(message) && num != null) {
 			htmlString += "<font color='green'><b>Success added record Quiz " + num + "</b></font><p>";
@@ -98,7 +98,7 @@ public class QuizController {
 			htmlString += "<font color='red'><b>Failed - " + message + "</b></font><p>";
 		}
 
-		htmlString += "<a href='/" + prefix + category + "'>Back to List</a><p>Adding Quiz - " + category.toUpperCase()
+		htmlString += "<a href='/" + prefix + category + "'>Back to List</a><p>Adding Quiz - " + prefix + category
 				+ ": <p><form id='quizAdd' action='/" + prefix + category + "/add' method='POST'>" //
 				+ "<table><tr><td>Description: </td><td><textarea name='Desc' form='quizAdd' rows=\"10\" cols=\"200\"></textarea></td></tr>" //
 				+ "<tr><td>Question: </td><td><textarea name='Title' form='quizAdd' rows=\"5\" cols=\"200\"></textarea></td></tr>" //
@@ -162,7 +162,7 @@ public class QuizController {
 
 		final Long maxNum = quizDao.getMaxNum(category);
 		final QuizEntity quiz = quizDao.readQuiz(category, id);
-		String htmlString = HTML_HEADER + category.toUpperCase() + " Quiz " + id + HTML_HEADER2 + "<a href='/" + prefix
+		String htmlString = HTML_HEADER + prefix + category + " Quiz " + id + HTML_HEADER2 + "<a href='/" + prefix
 				+ category + "'>Quiz List</a><p>";
 		if (id > 1) {
 			htmlString += "<a href='/" + prefix + category + "/" + (id - 1) + "'>Previous Quiz</a>";
