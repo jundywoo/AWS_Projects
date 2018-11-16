@@ -26,6 +26,8 @@ import com.ken.aws.quiz.service.StaticFileService;
 @RestController()
 public class QuizController {
 
+	private static final String LEGACY_PRFIX = "aws-quiz-";
+
 	@Autowired
 	private QuizDao quizDao;
 
@@ -53,21 +55,23 @@ public class QuizController {
 		return htmlString;
 	}
 
-	@RequestMapping("/aws-quiz-{category}")
-	public String list(@PathVariable("category") String category) {
-		Long maxNum = quizDao.getMaxNum(category);
-		String htmlString = HTML_HEADER + "AWS Quiz - " + category.toUpperCase() + HTML_HEADER2
+	@RequestMapping("/{category}")
+	public String list(@PathVariable("category") final String pCategory) {
+		final String category = pCategory.startsWith(LEGACY_PRFIX) ? pCategory.replaceAll(LEGACY_PRFIX, "") : pCategory;
+		final String prefix = pCategory != category ? LEGACY_PRFIX : "";
+		final Long maxNum = quizDao.getMaxNum(category);
+		String htmlString = HTML_HEADER + "Quiz - " + prefix + category.toUpperCase() + HTML_HEADER2
 				+ "<a href='/'>Home</a><p>Quiz List: <P>";
 
 		if (maxNum > 0) {
-			htmlString += "<a href='/aws-quiz-" + category + "/1'>Quiz 1</a>";
+			htmlString += "<a href='/" + prefix + category + "/1'>Quiz 1</a>";
 			for (int i = 2; i <= maxNum; i++) {
 				if (i % 10 == 1) {
 					htmlString += "<p>";
 				} else {
 					htmlString += "&nbsp;|&nbsp;";
 				}
-				htmlString += "<a href='/aws-quiz-" + category + "/" + i + "'>Quiz " + i + "</a>";
+				htmlString += "<a href='/" + prefix + category + "/" + i + "'>Quiz " + i + "</a>";
 			}
 		} else {
 			htmlString += "<p>No Question in the list";
@@ -77,11 +81,14 @@ public class QuizController {
 		return htmlString;
 	}
 
-	@RequestMapping(path = "/aws-quiz-{category}/add", method = RequestMethod.GET)
-	public String addQuizPage(@PathVariable("category") String category, //
-			HttpServletRequest httpServletRequest) {
-		String message = httpServletRequest.getParameter("message");
-		String num = httpServletRequest.getParameter("num");
+	@RequestMapping(path = "/{category}/add", method = RequestMethod.GET)
+	public String addQuizPage(@PathVariable("category") final String pCategory, //
+			final HttpServletRequest httpServletRequest) {
+		final String category = pCategory.startsWith(LEGACY_PRFIX) ? pCategory.replaceAll(LEGACY_PRFIX, "") : pCategory;
+		final String prefix = pCategory != category ? LEGACY_PRFIX : "";
+
+		final String message = httpServletRequest.getParameter("message");
+		final String num = httpServletRequest.getParameter("num");
 
 		String htmlString = HTML_HEADER + "Create AWS Quiz - " + category.toUpperCase() + HTML_HEADER2;
 
@@ -91,8 +98,8 @@ public class QuizController {
 			htmlString += "<font color='red'><b>Failed - " + message + "</b></font><p>";
 		}
 
-		htmlString += "<a href='/aws-quiz-" + category + "'>Back to List</a><p>Adding Quiz - " + category.toUpperCase()
-				+ ": <p><form id='quizAdd' action='/aws-quiz-" + category + "/add' method='POST'>" //
+		htmlString += "<a href='/" + prefix + category + "'>Back to List</a><p>Adding Quiz - " + category.toUpperCase()
+				+ ": <p><form id='quizAdd' action='/" + prefix + category + "/add' method='POST'>" //
 				+ "<table><tr><td>Description: </td><td><textarea name='Desc' form='quizAdd' rows=\"10\" cols=\"200\"></textarea></td></tr>" //
 				+ "<tr><td>Question: </td><td><textarea name='Title' form='quizAdd' rows=\"5\" cols=\"200\"></textarea></td></tr>" //
 				+ "<tr><td>Choices: </td><td><textarea name='Choices' form='quizAdd' rows=\"15\" cols=\"200\"></textarea></td></tr>" //
@@ -102,15 +109,18 @@ public class QuizController {
 		return htmlString;
 	}
 
-	@RequestMapping(path = "/aws-quiz-{category}/add", method = RequestMethod.POST)
-	public void addQuiz(@PathVariable("category") String category, //
-			@RequestParam("Title") String title, //
-			@RequestParam("Desc") String desc, //
-			@RequestParam("Choices") String choices, //
-			@RequestParam("Answer") String answer, //
-			HttpServletResponse response) throws IOException {
-		Long nextNum = quizDao.getMyCheck(category) + 1;
-		QuizEntity quiz = new QuizEntity() //
+	@RequestMapping(path = "/{category}/add", method = RequestMethod.POST)
+	public void addQuiz(@PathVariable("category") final String pCategory, //
+			@RequestParam("Title") final String title, //
+			@RequestParam("Desc") final String desc, //
+			@RequestParam("Choices") final String choices, //
+			@RequestParam("Answer") final String answer, //
+			final HttpServletResponse response) throws IOException {
+		final String category = pCategory.startsWith(LEGACY_PRFIX) ? pCategory.replaceAll(LEGACY_PRFIX, "") : pCategory;
+		final String prefix = pCategory != category ? LEGACY_PRFIX : "";
+
+		final Long nextNum = quizDao.getMyCheck(category) + 1;
+		final QuizEntity quiz = new QuizEntity() //
 				.category(category) //
 				.num(nextNum) //
 				.answer(answer) //
@@ -119,52 +129,58 @@ public class QuizController {
 				.desc(desc);
 		try {
 			quizDao.addQuiz(quiz);
-		} catch (RuntimeException e) {
+		} catch (final RuntimeException e) {
 			LOG.warn(e.getMessage());
-			response.sendRedirect("/aws-quiz-" + category + "/add?message="
+			response.sendRedirect("/" + prefix + category + "/add?message="
 					+ java.net.URLEncoder.encode(e.getMessage(), "ISO-8859-1"));
 		}
 
-		response.sendRedirect("/aws-quiz-" + category + "/add?message=success&num=" + nextNum);
+		response.sendRedirect("/" + prefix + category + "/add?message=success&num=" + nextNum);
 	}
 
-	@RequestMapping(path = "/aws-quiz-{category}/{id}/comment", method = RequestMethod.POST)
-	public void addQuizComment(@PathVariable("category") String category, //
-			@PathVariable("id") Long id, //
-			@RequestParam("author") String author, //
-			@RequestParam("comment") String comment, //
-			HttpServletResponse response) throws IOException {
-		QuizComment quizComment = new QuizComment().quizId(category + '-' + id).author(author).comment(comment);
+	@RequestMapping(path = "/{category}/{id}/comment", method = RequestMethod.POST)
+	public void addQuizComment(@PathVariable("category") final String pCategory, //
+			@PathVariable("id") final Long id, //
+			@RequestParam("author") final String author, //
+			@RequestParam("comment") final String comment, //
+			final HttpServletResponse response) throws IOException {
+		final String category = pCategory.startsWith(LEGACY_PRFIX) ? pCategory.replaceAll(LEGACY_PRFIX, "") : pCategory;
+		final String prefix = pCategory != category ? LEGACY_PRFIX : "";
+
+		final QuizComment quizComment = new QuizComment().quizId(category + '-' + id).author(author).comment(comment);
 
 		commentDao.addComment(quizComment);
 
-		response.sendRedirect("/aws-quiz-" + category + "/" + id);
+		response.sendRedirect("/" + prefix + category + "/" + id);
 	}
 
-	@RequestMapping("/aws-quiz-{category}/{id}")
-	public String getQuiz(@PathVariable("category") String category, //
-			@PathVariable("id") Long id) {
-		Long maxNum = quizDao.getMaxNum(category);
-		QuizEntity quiz = quizDao.readQuiz(category, id);
-		String htmlString = HTML_HEADER + category.toUpperCase() + " Quiz " + id + HTML_HEADER2 + "<a href='/aws-quiz-"
+	@RequestMapping("/{category}/{id}")
+	public String getQuiz(@PathVariable("category") final String pCategory, //
+			@PathVariable("id") final Long id) {
+		final String category = pCategory.startsWith(LEGACY_PRFIX) ? pCategory.replaceAll(LEGACY_PRFIX, "") : pCategory;
+		final String prefix = pCategory != category ? LEGACY_PRFIX : "";
+
+		final Long maxNum = quizDao.getMaxNum(category);
+		final QuizEntity quiz = quizDao.readQuiz(category, id);
+		String htmlString = HTML_HEADER + category.toUpperCase() + " Quiz " + id + HTML_HEADER2 + "<a href='/" + prefix
 				+ category + "'>Quiz List</a><p>";
 		if (id > 1) {
-			htmlString += "<a href='/aws-quiz-" + category + "/" + (id - 1) + "'>Previous Quiz</a>";
+			htmlString += "<a href='/" + prefix + category + "/" + (id - 1) + "'>Previous Quiz</a>";
 		}
 		if (id < maxNum) {
-			htmlString += "&nbsp;&nbsp;&nbsp;&nbsp;<a href='/aws-quiz-" + category + "/" + (id + 1) + "'>Next Quiz</a>";
+			htmlString += "&nbsp;&nbsp;&nbsp;&nbsp;<a href='/" + prefix + category + "/" + (id + 1) + "'>Next Quiz</a>";
 		}
 		htmlString += "<p>Quiz " + id + "  <p>";
 
 		if (quiz != null) {
 			htmlString += "<table border='1'>";
 
-			String desc = quiz.getDesc();
+			final String desc = quiz.getDesc();
 			if (desc != null && !"".equals(desc.trim())) {
 				htmlString += "<tr><td><b>Description</b></td><td><h1><pre>" + desc + "</pre></h1></td></tr>";
 			}
 
-			List<QuizComment> comments = commentDao.readCommenByQuiz(category + '-' + id);
+			final List<QuizComment> comments = commentDao.readCommenByQuiz(category + '-' + id);
 			htmlString += "<tr><td><b>Question</b></td><td><h1><pre>" + quiz.getTitle() + "</pre></h1></td></tr>" //
 					+ "<tr><td><b>Choices<b></td><td><h3><pre>" + quiz.getChoices() + "</pre></h3></td></tr>" //
 					+ "<tr><td><b>Answer</b></td><td><h3><font id='answerBox' color='red'>"
@@ -174,9 +190,9 @@ public class QuizController {
 					+ "<tr><td><b>" + (comments.isEmpty() ? "No Comment" : "Comment (" + comments.size() + ")")
 					+ "</td><td>";
 
-			String addCommentHtml = "<button id='addComment' onclick='getElementById(\"addComment\").style.display=\"none\";"
+			final String addCommentHtml = "<button id='addComment' onclick='getElementById(\"addComment\").style.display=\"none\";"
 					+ "getElementById(\"commentForm\").style.display=\"block\" ' >Add Comment</button><div id='commentForm' style='display: none'>"
-					+ "<form id='commentAdd' action='/aws-quiz-" + category + "/" + id + "/comment' method='POST'>"
+					+ "<form id='commentAdd' action='/" + prefix + category + "/" + id + "/comment' method='POST'>"
 					+ "<table><tr><td>Author:</td><td><input name='author' /></td></tr>"
 					+ "<tr><td>Comment:</td><td><textarea name='comment' form='commentAdd'  rows='5' cols='200'></textarea></table>"
 					+ "<input type='submit'/></form></div>";
@@ -203,10 +219,10 @@ public class QuizController {
 		}
 
 		if (id > 1) {
-			htmlString += "<a href='/aws-quiz-" + category + "/" + (id - 1) + "'>Previous Quiz</a>";
+			htmlString += "<a href='/" + prefix + category + "/" + (id - 1) + "'>Previous Quiz</a>";
 		}
 		if (id < maxNum) {
-			htmlString += "&nbsp;&nbsp;&nbsp;&nbsp;<a href='/aws-quiz-" + category + "/" + (id + 1) + "'>Next Quiz</a>";
+			htmlString += "&nbsp;&nbsp;&nbsp;&nbsp;<a href='/" + prefix + category + "/" + (id + 1) + "'>Next Quiz</a>";
 		}
 
 		htmlString += "</body><html>";
