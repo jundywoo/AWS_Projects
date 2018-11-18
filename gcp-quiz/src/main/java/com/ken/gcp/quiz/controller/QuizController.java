@@ -58,7 +58,7 @@ public class QuizController {
 		final Long maxNum = quizDao.getMaxNum(category);
 		String htmlString = HTML_HEADER + "Quiz - " + category + HTML_HEADER2 + "<a href='/'>Home</a><p>Quiz List: <P>";
 
-		if (maxNum > 0) {
+		if (maxNum != null && maxNum > 0) {
 			htmlString += "<a href='/" + category + "/1'>Quiz 1</a>";
 			for (int i = 2; i <= maxNum; i++) {
 				if (i % 10 == 1) {
