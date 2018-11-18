@@ -44,7 +44,7 @@ public class QuizCommentDao implements InitializingBean {
 		final List<QuizComment> quizComments = new ArrayList<>();
 
 		final QuizEntity tempEntity = new QuizEntity().category(category).num(num);
-		final String gqlQuery = "select * from " + KIND_NAME + " where quiz = '" + tempEntity.getKey() + "'";
+		final String gqlQuery = "select * from " + KIND_NAME + " where quiz_id = '" + tempEntity.getKey() + "'";
 		final Query<?> query = Query.newGqlQueryBuilder(gqlQuery).setAllowLiteral(true).build();
 		final QueryResults<?> results = datastore.run(query);
 

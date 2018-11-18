@@ -40,7 +40,7 @@ public class QuizController {
 
 	private static final Log LOG = LogFactory.getLog(QuizController.class);
 	private static final String HTML_HEADER = "<!DOCTYPE html><html><head><title>";
-	private static final String HTML_HEADER2 = "</title><link rel=\"shortcut icon\" href=\"https://storage.googleapis.com/kennie-ng/quiz-icon.ico\"></head><body>";
+	private static final String HTML_HEADER2 = "</title><link rel=\"shortcut icon\" href=\"https://storage.googleapis.com/kennieng-quiz/quiz-icon.ico\"></head><body>";
 
 	@RequestMapping(path = "/", method = RequestMethod.GET)
 	public String index() {
