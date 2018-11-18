@@ -77,7 +77,7 @@ public class QuizDao implements InitializingBean {
 	public Entity addQuiz(final QuizEntity quiz) {
 		final IncompleteKey key = entityKeyFactory.newKey(quiz.getKey()); // Key will be assigned once written
 		final FullEntity<IncompleteKey> entity = Entity.newBuilder(key) // Create the Entity
-				.set(TITLE, quiz.getTitle()) //
+				.set(TITLE, MyValueUtils.noIndexString(quiz.getTitle())) //
 				.set(DESC, MyValueUtils.noIndexString(quiz.getDesc())) //
 				.set(CHOICES, MyValueUtils.noIndexString(quiz.getChoices())) //
 				.set(ANSWER, MyValueUtils.noIndexString(quiz.getAnswer())).build();

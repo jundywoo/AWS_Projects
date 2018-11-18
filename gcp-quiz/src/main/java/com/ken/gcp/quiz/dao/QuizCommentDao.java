@@ -13,7 +13,6 @@ import java.util.List;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.stereotype.Service;
 
-import com.google.cloud.Timestamp;
 import com.google.cloud.datastore.Datastore;
 import com.google.cloud.datastore.DatastoreOptions;
 import com.google.cloud.datastore.Entity;
@@ -71,7 +70,7 @@ public class QuizCommentDao implements InitializingBean {
 		final IncompleteKey key = keyFactory.newKey(); // Key will be assigned once written
 		final FullEntity<IncompleteKey> entity = Entity.newBuilder(key) // Create the Entity
 				.set(QUIZ_ID, quizComment.getQuizId()) //
-				.set(DATE, Timestamp.now()) //
+				.set(DATE, new Date().getTime()) //
 				.set(AUTHOR, MyValueUtils.noIndexString(quizComment.getAuthor())) //
 				.set(COMMENT, MyValueUtils.noIndexString(quizComment.getComment())).build();
 		final Entity addedEntity = datastore.add(entity); // Save the Entity
