@@ -55,7 +55,7 @@ public class QuizCommentDao implements InitializingBean {
 			final QuizComment comment = new QuizComment() //
 					.quizId(result.getString(QUIZ_ID)) //
 					.author(result.getString(AUTHOR)) //
-					.date(new Date(result.getTimestamp(DATE).toSqlTimestamp().getTime())) //
+					.date(new Date(result.getLong(DATE))) //
 					.comment(result.getString(COMMENT));
 
 			quizComments.add(comment);
