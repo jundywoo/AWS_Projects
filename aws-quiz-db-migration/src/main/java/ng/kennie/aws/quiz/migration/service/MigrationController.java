@@ -32,8 +32,8 @@ public class MigrationController {
 		} else {
 			final Matcher matcher = FROM_TO_DIGIT.matcher(num);
 			if (matcher.find()) {
-				final long fromNum = Long.parseLong(matcher.group(0));
-				final long toNum = Long.parseLong(matcher.group(1));
+				final long fromNum = Long.parseLong(matcher.group(1));
+				final long toNum = Long.parseLong(matcher.group(2));
 
 				for (long i = fromNum; i <= toNum; i++) {
 					doMigrateQuiz(prefix, category, i);
