@@ -13,8 +13,8 @@ import org.springframework.web.bind.annotation.RestController;
 public class MigrationController {
 
 	private static final String LEGACY_PRFIX = "aws-quiz-";
-	private static final Pattern PURE_DIGIT = Pattern.compile("\\d+");
-	private static final Pattern FROM_TO_DIGIT = Pattern.compile("(\\d+)-(\\d+)");
+	private static final Pattern PURE_DIGIT = Pattern.compile("^\\d+$");
+	private static final Pattern FROM_TO_DIGIT = Pattern.compile("^(\\d+)-(\\d+)$");
 
 	private static final Log LOG = LogFactory.getLog(MigrationController.class);
 
@@ -38,14 +38,16 @@ public class MigrationController {
 				for (long i = fromNum; i <= toNum; i++) {
 					doMigrateQuiz(prefix, category, i);
 				}
+			} else {
+				return "Not match the pattern, " + prefix + category + " on " + num;
 			}
 		}
 
-		return "Migrate Quiz: " + category + " on " + num;
+		return "Migrate Quiz: " + prefix + category + " on " + num;
 	}
 
 	private void doMigrateQuiz(final String prefix, final String category, final long num) {
-		LOG.info(String.format("Migrating: %s-%s, %d", prefix, category, num));
+		LOG.info(String.format("Migrating: %s%s, %d", prefix, category, num));
 	}
 
 	@RequestMapping("migrateComment/{category}/{num}")
@@ -65,14 +67,16 @@ public class MigrationController {
 				for (long i = fromNum; i <= toNum; i++) {
 					doMigrateComment(prefix, category, i);
 				}
+			} else {
+				return "Not match the pattern, " + prefix + category + " on " + num;
 			}
 		}
 
-		return "Migrate QuizComment: " + category + " on " + num;
+		return "Migrate QuizComment: " + prefix + category + " on " + num;
 	}
 
 	private void doMigrateComment(final String prefix, final String category, final long num) {
-		LOG.info(String.format("Migrating: %s-%s, %d", prefix, category, num));
+		LOG.info(String.format("Migrating: %s%s, %d", prefix, category, num));
 	}
 
 }
