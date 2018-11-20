@@ -1,13 +1,22 @@
 package ng.kennie.aws.quiz.migration.service;
 
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import ng.kennie.aws.quiz.migration.dao.AWSQuizDao;
+import ng.kennie.aws.quiz.migration.dao.GCPQuizDao;
+import ng.kennie.aws.quiz.migration.model.AWSQuizComment;
+import ng.kennie.aws.quiz.migration.model.AWSQuizEntity;
+import ng.kennie.aws.quiz.migration.model.GCPQuizComment;
+import ng.kennie.aws.quiz.migration.model.GCPQuizEntity;
 
 @RestController()
 public class MigrationController {
@@ -18,8 +27,11 @@ public class MigrationController {
 
 	private static final Log LOG = LogFactory.getLog(MigrationController.class);
 
-	// @Autowired
-	// private AWSQuizDao awsQuizDao;
+	@Autowired
+	private AWSQuizDao awsQuizDao;
+
+	@Autowired
+	private GCPQuizDao gcpQuizDao;
 
 	@RequestMapping("migrateQuiz/{category}/{num}")
 	public String migrateQuiz(@PathVariable("category") final String pCategory, //
@@ -47,7 +59,18 @@ public class MigrationController {
 	}
 
 	private void doMigrateQuiz(final String prefix, final String category, final long num) {
-		LOG.info(String.format("Migrating: %s%s, %d", prefix, category, num));
+		final AWSQuizEntity awsQuiz = awsQuizDao.readQuiz(category, num);
+
+		final GCPQuizEntity gcpQuiz = new GCPQuizEntity() //
+				.category(prefix + category) //
+				.num(num) //
+				.title(awsQuiz.getTitle()) //
+				.desc(awsQuiz.getDesc()) //
+				.choices(awsQuiz.getChoices()) //
+				.answer(awsQuiz.getAnswer());
+		gcpQuizDao.addQuiz(gcpQuiz);
+
+		LOG.info(String.format("Migrated: %s%s, %d", prefix, category, num));
 	}
 
 	@RequestMapping("migrateComment/{category}/{num}")
@@ -61,8 +84,8 @@ public class MigrationController {
 		} else {
 			final Matcher matcher = FROM_TO_DIGIT.matcher(num);
 			if (matcher.find()) {
-				final long fromNum = Long.parseLong(matcher.group(0));
-				final long toNum = Long.parseLong(matcher.group(1));
+				final long fromNum = Long.parseLong(matcher.group(1));
+				final long toNum = Long.parseLong(matcher.group(2));
 
 				for (long i = fromNum; i <= toNum; i++) {
 					doMigrateComment(prefix, category, i);
@@ -76,6 +99,16 @@ public class MigrationController {
 	}
 
 	private void doMigrateComment(final String prefix, final String category, final long num) {
+		final List<AWSQuizComment> awsComments = awsQuizDao.readCommenByQuiz(category + "_" + num);
+		for (final AWSQuizComment awsComment : awsComments) {
+			final GCPQuizComment gcpComment = new GCPQuizComment() //
+					.author(awsComment.getAuthor())//
+					.date(awsComment.getDate()) //
+					.quizId(prefix + awsComment.getQuizId()) //
+					.comment(awsComment.getComment());
+
+			gcpQuizDao.addComment(gcpComment);
+		}
 		LOG.info(String.format("Migrating: %s%s, %d", prefix, category, num));
 	}
 

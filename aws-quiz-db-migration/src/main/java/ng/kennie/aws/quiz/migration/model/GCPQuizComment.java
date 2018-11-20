@@ -6,7 +6,7 @@ import java.util.TimeZone;
 
 public class GCPQuizComment implements Comparable<GCPQuizComment> {
 
-	public static final String TABLE_NAME_QUIZ_COMMENT = "quiz_comment";
+	public static final String KIND_QUIZ_COMMENT = "quiz_comment";
 
 	// Primary Key
 	public static final String QUIZ_ID = "quiz_id";
