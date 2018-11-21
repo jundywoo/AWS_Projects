@@ -28,7 +28,7 @@ import com.ken.gcp.quiz.utils.MyValueUtils;
 @Service
 public class QuizCommentDao implements InitializingBean {
 
-	public static final String KIND_NAME = "quiz_comment";
+	public static final String KIND_QUIZ_COMMENT = "quiz_comment";
 
 	private Datastore datastore;
 	private KeyFactory keyFactory;
@@ -36,14 +36,14 @@ public class QuizCommentDao implements InitializingBean {
 	@Override
 	public void afterPropertiesSet() throws Exception {
 		datastore = DatastoreOptions.getDefaultInstance().getService(); // Authorized Datastore service
-		keyFactory = datastore.newKeyFactory().setKind(KIND_NAME);
+		keyFactory = datastore.newKeyFactory().setKind(KIND_QUIZ_COMMENT);
 	}
 
 	public List<QuizComment> readCommenByQuiz(final String category, final Long num) {
 		final List<QuizComment> quizComments = new ArrayList<>();
 
 		final QuizEntity tempEntity = new QuizEntity().category(category).num(num);
-		final String gqlQuery = "select * from " + KIND_NAME + " where quiz_id = '" + tempEntity.getKey() + "'";
+		final String gqlQuery = "select * from " + KIND_QUIZ_COMMENT + " where quiz_id = '" + tempEntity.getKey() + "'";
 		final Query<?> query = Query.newGqlQueryBuilder(gqlQuery).setAllowLiteral(true).build();
 		final QueryResults<?> results = datastore.run(query);
 

@@ -99,7 +99,7 @@ public class MigrationController {
 	}
 
 	private void doMigrateComment(final String prefix, final String category, final long num) {
-		final List<AWSQuizComment> awsComments = awsQuizDao.readCommenByQuiz(category + "_" + num);
+		final List<AWSQuizComment> awsComments = awsQuizDao.readCommenByQuiz(category + "-" + num);
 		for (final AWSQuizComment awsComment : awsComments) {
 			final GCPQuizComment gcpComment = new GCPQuizComment() //
 					.author(awsComment.getAuthor())//
