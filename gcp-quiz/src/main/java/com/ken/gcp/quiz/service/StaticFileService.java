@@ -6,6 +6,8 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -53,6 +55,14 @@ public class StaticFileService {
 		} catch (final IOException e) {
 			LOG.warn(e.getMessage());
 			return null;
+		}
+	}
+
+	public String hostname() {
+		try {
+			return InetAddress.getLocalHost().getHostName();
+		} catch (final UnknownHostException e) {
+			return "Unknown Host";
 		}
 	}
 
