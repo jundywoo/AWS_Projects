@@ -44,10 +44,15 @@ public class QuizController {
 
 	@RequestMapping(path = "/", method = RequestMethod.GET)
 	public String index() {
+		final String hostname = staticFileService.hostname();
 		String htmlString = staticFileService.readFileToEnd(indexPage);
 
 		if (htmlString == null) {
-			htmlString = "<!DOCTYPE html><html><h1>Hi, Welcome to my Server!</h1><font color='red'>Page not found</font><html>";
+			htmlString = "<!DOCTYPE html><html><h1>Hi, Welcome to my Server!</h1>"
+					+ "<font color='red'>Page not found</font><P>" + "<h3>This is running on GCP " + hostname
+					+ " by docker container</h3><html>";
+		} else {
+			htmlString = htmlString.replaceAll("\\$host\\$", hostname);
 		}
 
 		return htmlString;
