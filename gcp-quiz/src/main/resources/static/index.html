@@ -9,8 +9,44 @@
                 <p>
                 Goto <a href='/aws-quiz-saa'>AWS Quiz - Solution Architech Associate</a>
                 <p>
-                Goto <a href='/gcp-quiz-ace'>GCP Quiz - Associate Cloud Engineer</a>
+                Goto <a href='/gcp-quiz-ace'>GCP Quiz - Associate Cloud Engineer (Official Pratise)</a>
                 <p><p>
+                
+                <div style="border-style: groove; width: 1200">
+	                <a href="#" id="gcpClick" onclick="show('gcp')">Click to open GCP video</a>
+					<div id="gcpVideo" style="border-style: groove; display: none">
+						<p><a href="http://www.bilibili.com/video/av37445607" target="_blank">GCP 01-Course Intro and Outline</a></p>
+						<p><a href="http://www.bilibili.com/video/av37445818" target="_blank">GCP 02-Google Certified ACE Exam Guide (Blueprint)</a></p>
+						<p><a href="http://www.bilibili.com/video/av37483842" target="_blank">GCP 03-Free-Tier GCP Accounts</a></p>
+						<p><a href="http://www.bilibili.com/video/av37483909" target="_blank">GCP 04-Create Free-Tier GCP Account (Lab)</a></p>
+						<p><a href="http://www.bilibili.com/video/av37483969" target="_blank">GCP 05-Explore GCP Console (Lab)</a></p>
+						<p><a href="http://www.bilibili.com/video/av37484043" target="_blank">GCP 06-Set Up Billing Export (Lab)</a></p>
+						<p><a href="http://www.bilibili.com/video/av37484087" target="_blank">GCP 07-Set Up Billing Alert (Lab)</a></p>
+						<p><a href="http://www.bilibili.com/video/av37484131" target="_blank">GCP 08-Set Up Non-Admin User Access (Lab)</a></p>
+						<p><a href="http://www.bilibili.com/video/av37484192" target="_blank">GCP 09-Cloud Shell and Editor (Lab)</a></p>
+						<p><a href="http://www.bilibili.com/video/av37484274" target="_blank">GCP 10-Data Flows</a></p>
+						<p><a href="http://www.bilibili.com/video/av37484562" target="_blank">GCP 11-GCS- Google Cloud Storage (Lab)</a></p>
+						<p><a href="http://www.bilibili.com/video/av37484633" target="_blank">GCP 12-GCS via gsutil in Command Line (Lab)</a></p>
+						<p><a href="http://www.bilibili.com/video/av37484675" target="_blank">GCP 13-Starting Our First VM (Lab)</a></p>
+						<p><a href="http://www.bilibili.com/video/av37484721" target="_blank">GCP 14-Rundown on gcloud</a></p>
+						<p><a href="http://www.bilibili.com/video/av37566277" target="_blank">GCP 97-Logistics</a></p>
+						<p><a href="http://www.bilibili.com/video/av37566334" target="_blank">GCP 98-Final Preparation</a></p>
+						<p><a href="http://www.bilibili.com/video/av37566408" target="_blank">GCP 99-Thank You and Good Luck</a></p>
+					</div>
+				</div>
                 <h3>This is version @project.version@ that running on GCP $host$ container</h3>
         </body>
+        <script>
+        function show(id) {
+        	var click = document.getElementById(id + "Click");
+		    var video = document.getElementById(id + "Video");
+		    if (video.style.display === "none") {
+		        video.style.display = "block";
+		        click.text="Click to close "+id.toUpperCase()+" video";
+		    } else {
+		        video.style.display = "none";
+		        click.text="Click to open "+id.toUpperCase()+" video";
+		    }
+		}
+        </script>
 <html>
