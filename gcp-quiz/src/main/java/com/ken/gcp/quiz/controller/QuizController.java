@@ -123,6 +123,7 @@ public class QuizController {
 				.desc(desc);
 		try {
 			quizDao.addQuiz(quiz);
+			quizDao.updateNextNum(category, nextNum);
 		} catch (final RuntimeException e) {
 			LOG.warn(e.getMessage());
 			response.sendRedirect(

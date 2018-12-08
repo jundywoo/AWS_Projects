@@ -101,4 +101,14 @@ public class QuizDao implements InitializingBean {
 
 		System.out.println(addedEntity);
 	}
+
+	public void updateNextNum(final String category, final Long nextNum) {
+		final Entity entity = datastore.get(controlKeyFactory.newKey(category));
+		Long maxNum = getMaxNum(category);
+		if (maxNum < nextNum) {
+			maxNum = nextNum;
+		}
+		final Entity copyEntity = Entity.newBuilder(entity).set(MY_CHECK, nextNum).set(MAX_NUM, maxNum).build();
+		datastore.put(copyEntity);
+	}
 }
